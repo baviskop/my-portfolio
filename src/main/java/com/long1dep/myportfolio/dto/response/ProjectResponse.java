@@ -15,4 +15,5 @@ public class ProjectResponse {
     private String githubUrl;
     private String demoUrl;
     private String imageUrl;
+    private long views;
 }

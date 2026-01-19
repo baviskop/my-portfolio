@@ -23,13 +23,15 @@ public class Project {
     @Column(nullable = false, columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
-    private String technologies; // "Spring Boot, React
+    private String technologies; // "Spring Boot, React"
 
     private String githubUrl;
 
     private String demoUrl;
 
     private String imageUrl;
+
+    private long views = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

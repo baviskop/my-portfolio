@@ -40,6 +40,7 @@ public class SearchService {
                 b.getSummary(),
                 b.getContent(),
                 b.getTags(),
+                b.getViews(),
                 b.getCreatedAt()
         );
     }
@@ -52,7 +53,8 @@ public class SearchService {
                 p.getTechnologies(),
                 p.getGithubUrl(),
                 p.getDemoUrl(),
-                p.getImageUrl()
+                p.getImageUrl(),
+                p.getViews()
         );
     }
 }

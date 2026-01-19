@@ -65,7 +65,8 @@ public class ProjectService {
                 p.getTechnologies(),
                 p.getGithubUrl(),
                 p.getDemoUrl(),
-                p.getImageUrl()
+                p.getImageUrl(),
+                p.getViews()
         );
     }
 

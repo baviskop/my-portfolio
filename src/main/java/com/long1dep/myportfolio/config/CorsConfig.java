@@ -1,4 +1,30 @@
 package com.long1dep.myportfolio.config;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+
+@Configuration
 public class CorsConfig {
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(
+            @Value("${app.cors.allowed-origins:*}") String allowedOrigins
+    ) {
+        CorsConfiguration config = new CorsConfiguration();
+        // hỗ trợ cấu hình dạng: "*" hoặc "http://localhost:3000,https://your-domain"
+        config.setAllowedOriginPatterns(List.of(allowedOrigins.split("\\s*,\\s*")));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 }

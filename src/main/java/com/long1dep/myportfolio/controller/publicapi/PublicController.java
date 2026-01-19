@@ -38,7 +38,7 @@ public class PublicController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<SearchResponse> search(@RequestBody String q) {
+    public ResponseEntity<SearchResponse> search(@RequestParam("q") String q) {
         return ResponseEntity.ok(searchService.search(q));
     }
 }

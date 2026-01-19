@@ -32,6 +32,8 @@ public class Blog {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private long views = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

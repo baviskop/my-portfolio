@@ -16,5 +16,6 @@ public class BlogResponse {
     private String summary;
     private String content;
     private String tags;
+    private long views;
     private LocalDateTime createdAt;
 }

@@ -38,6 +38,16 @@ public class BlogService {
         return toResponse(blog);
     }
 
+    public BlogResponse getById(Long id) {
+        Blog blog = blogRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Blog not found"));
+
+        blog.setViews(blog.getViews() + 1);
+
+        return toResponse(blog);
+    }
+
+
     //ADMIN
     public BlogResponse create(BlogRequest request) {
         Blog blog = new Blog();
@@ -73,6 +83,7 @@ public class BlogService {
                 b.getSummary(),
                 b.getContent(),
                 b.getTags(),
+                b.getViews(),
                 b.getCreatedAt()
         );
     }

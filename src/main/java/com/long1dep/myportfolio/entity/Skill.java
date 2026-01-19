@@ -24,4 +24,8 @@ public class Skill {
     private int level; // 1 - 100%
 //    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
 //    private String icon_url;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

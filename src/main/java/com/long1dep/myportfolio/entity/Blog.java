@@ -27,7 +27,12 @@ public class Blog {
     private String content;
 
     private String tags; // "spring,java,backend"
+    private String thumbnailUrl;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

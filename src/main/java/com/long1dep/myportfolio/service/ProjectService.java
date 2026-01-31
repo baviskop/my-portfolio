@@ -3,8 +3,11 @@ package com.long1dep.myportfolio.service;
 import com.long1dep.myportfolio.dto.request.ProjectRequest;
 import com.long1dep.myportfolio.dto.response.ProjectResponse;
 import com.long1dep.myportfolio.entity.Project;
+import com.long1dep.myportfolio.exception.ResourceNotFoundException;
 import com.long1dep.myportfolio.repository.ProjectRepository;
+import com.long1dep.myportfolio.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepo;
+    private final UserRepository userRepo;
 
     //PUBLIC
     public List<ProjectResponse> getAll() {
@@ -24,34 +28,39 @@ public class ProjectService {
 
     public ProjectResponse getById(Long id) {
         Project p = projectRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
         return toResponse(p);
     }
 
     //ADMIN
     public ProjectResponse create(ProjectRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        com.long1dep.myportfolio.entity.User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         Project p = new Project();
         mapRequest(p, request);
+        p.setUser(user);
         return toResponse(projectRepo.save(p));
     }
 
     public ProjectResponse update(Long id, ProjectRequest request) {
         Project p = projectRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
         mapRequest(p, request);
         return toResponse(projectRepo.save(p));
     }
 
     public void delete(Long id) {
         if(!projectRepo.existsById(id)) {
-            throw new RuntimeException("Project not found");
+            throw new ResourceNotFoundException("Project not found with id: " + id);
         }
         projectRepo.deleteById(id);
     }
 
     public void updateImage(Long id, String imageUrl) {
         Project p = projectRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
         p.setImageUrl(imageUrl);
         projectRepo.save(p);
     }

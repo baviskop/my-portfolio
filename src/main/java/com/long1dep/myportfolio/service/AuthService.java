@@ -3,6 +3,7 @@ package com.long1dep.myportfolio.service;
 import com.long1dep.myportfolio.dto.request.RegisterRequest;
 import com.long1dep.myportfolio.entity.Role;
 import com.long1dep.myportfolio.entity.User;
+import com.long1dep.myportfolio.exception.ResourceNotFoundException;
 import com.long1dep.myportfolio.repository.RoleRepository;
 import com.long1dep.myportfolio.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class AuthService {
             throw new RuntimeException("Email already exists");
         }
         Role userRole = roleRepository.findByName("USER")
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Default role 'USER' not found"));
 
         User user = new User();
         user.setUsername(request.getUsername());

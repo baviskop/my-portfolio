@@ -3,9 +3,12 @@ package com.long1dep.myportfolio.service;
 import com.long1dep.myportfolio.dto.request.BlogRequest;
 import com.long1dep.myportfolio.dto.response.BlogResponse;
 import com.long1dep.myportfolio.entity.Blog;
+import com.long1dep.myportfolio.exception.ResourceNotFoundException;
 import com.long1dep.myportfolio.repository.BlogRepository;
+import com.long1dep.myportfolio.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
@@ -16,16 +19,17 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class BlogService {
     private final BlogRepository blogRepo;
+    private final UserRepository userRepo;
 
-    //PUBLIC
+    // PUBLIC
     public Page<BlogResponse> getAll(int page, int size, String search) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         Page<Blog> blogs;
 
-        if(search == null || search.isBlank()) {
+        if (search == null || search.isBlank()) {
             blogs = blogRepo.findAll(pageable);
-        }else {
+        } else {
             blogs = blogRepo.findByTitleContainingIgnoreCaseOrSummaryContainingIgnoreCase(search, search, pageable);
         }
 
@@ -34,47 +38,52 @@ public class BlogService {
 
     public BlogResponse getBySlug(String slug) {
         Blog blog = blogRepo.findBySlug(slug)
-                .orElseThrow(() -> new RuntimeException("Blog not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Blog not found with slug: " + slug));
         return toResponse(blog);
     }
 
     public BlogResponse getById(Long id) {
         Blog blog = blogRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Blog not found with id: " + id));
 
         blog.setViews(blog.getViews() + 1);
 
         return toResponse(blog);
     }
 
-
-    //ADMIN
+    // ADMIN
     public BlogResponse create(BlogRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        com.long1dep.myportfolio.entity.User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         Blog blog = new Blog();
         mapRequest(blog, request);
         blog.setSlug(toSlug(request.getTitle()));
         blog.setCreatedAt(LocalDateTime.now());
         blog.setUpdatedAt(LocalDateTime.now());
+        blog.setUser(user);
         return toResponse(blogRepo.save(blog));
     }
 
-    public BlogResponse upadte(Long id, BlogRequest request) {
+    public BlogResponse update(Long id, BlogRequest request) {
         Blog blog = blogRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Blog not found with id: " + id));
         mapRequest(blog, request);
         blog.setSlug(toSlug(request.getTitle()));
         blog.setUpdatedAt(LocalDateTime.now());
 
         return toResponse(blogRepo.save(blog));
     }
+
     public void delete(Long id) {
-        if(!blogRepo.existsById(id)) {
-            throw new RuntimeException("Blog not found");
+        if (!blogRepo.existsById(id)) {
+            throw new ResourceNotFoundException("Blog not found with id: " + id);
         }
         blogRepo.deleteById(id);
     }
 
-    //Helper
+    // Helper
     private BlogResponse toResponse(Blog b) {
         return new BlogResponse(
                 b.getId(),
@@ -84,8 +93,7 @@ public class BlogService {
                 b.getContent(),
                 b.getTags(),
                 b.getViews(),
-                b.getCreatedAt()
-        );
+                b.getCreatedAt());
     }
 
     private void mapRequest(Blog blog, BlogRequest r) {
@@ -95,7 +103,7 @@ public class BlogService {
         blog.setTags(r.getTags());
     }
 
-    //title -> seo-friendly slug
+    // title -> seo-friendly slug
     private String toSlug(String input) {
         String nowhitespace = input.trim().replaceAll("\\s+", "-");
         String normalized = Normalizer.normalize(nowhitespace, Normalizer.Form.NFD);

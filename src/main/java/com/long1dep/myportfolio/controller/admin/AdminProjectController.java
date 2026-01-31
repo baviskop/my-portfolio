@@ -4,6 +4,7 @@ import com.long1dep.myportfolio.dto.request.ProjectRequest;
 import com.long1dep.myportfolio.dto.response.ProjectResponse;
 import com.long1dep.myportfolio.service.FileStorageService;
 import com.long1dep.myportfolio.service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +24,14 @@ public class AdminProjectController {
     private final FileStorageService fileStorageService;
 
     @PostMapping
-    public ResponseEntity<ProjectResponse> create(@RequestBody ProjectRequest request) {
+    public ResponseEntity<ProjectResponse> create(@Valid @RequestBody ProjectRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(projectService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProjectResponse> update(@PathVariable Long id, @RequestBody ProjectRequest request) {
+    public ResponseEntity<ProjectResponse> update(@PathVariable Long id, @Valid @RequestBody ProjectRequest request) {
         return ResponseEntity.ok(projectService.update(id, request));
     }
 
@@ -42,13 +43,11 @@ public class AdminProjectController {
 
     //UPLOAD IMAGE
     @PostMapping("/{id}/image")
-    public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("file")MultipartFile file) throws IOException {
+    public ResponseEntity<Map<String, String>> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         String url = fileStorageService.saveImage(file);
         projectService.updateImage(id, url);
 
-        return ResponseEntity.ok().body(
-                Map.of("imageUrl", url)
-        );
+        return ResponseEntity.ok(Map.of("imageUrl", url));
     }
 
 }

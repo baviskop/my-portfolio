@@ -10,12 +10,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContactRequest {
-    @NotBlank
+    @NotBlank(message = "Name is required")
     private String name;
-    @Email @NotBlank
+
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email is required")
     private String email;
-    @NotBlank
+
+    @NotBlank(message = "Subject is required")
     private String subject;
-    @NotBlank
+
+    @NotBlank(message = "Message is required")
     private String message;
 }

@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
-
 @Entity
 @Table(name = "skills")
 @Data
@@ -22,8 +20,8 @@ public class Skill {
     private String category; // FE - BE - DevOps
 
     private int level; // 1 - 100%
-//    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
-//    private String icon_url;
+    // @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
+    // private String icon_url;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

@@ -3,9 +3,10 @@ package com.long1dep.myportfolio.controller.publicapi;
 import com.long1dep.myportfolio.dto.request.LoginRequest;
 import com.long1dep.myportfolio.dto.request.RegisterRequest;
 import com.long1dep.myportfolio.dto.response.LoginResponse;
-import com.long1dep.myportfolio.dto.response.RegisterResponse;
+import com.long1dep.myportfolio.dto.response.MessageResponse;
 import com.long1dep.myportfolio.security.JwtTokenProvider;
 import com.long1dep.myportfolio.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,15 +29,15 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new RegisterResponse("Registered Successfully"));
+                .body(new MessageResponse("Registered Successfully"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, SessionStatus sessionStatus) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request, SessionStatus sessionStatus) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),

@@ -1,8 +1,6 @@
 package com.long1dep.myportfolio.service;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -26,15 +24,16 @@ public class FileStorageService {
     }
 
     public String save(MultipartFile file, String folder, List<String> types) throws IOException {
-        if(file.isEmpty()) {
+        if (file.isEmpty()) {
             throw new RuntimeException("Empty file");
         }
 
-        if(!types.contains(file.getContentType())) {
+        if (!types.contains(file.getContentType())) {
             throw new RuntimeException("Invalid file type: " + file.getContentType());
         }
 
-        String ext = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf("."));
+        String ext = Objects.requireNonNull(file.getOriginalFilename())
+                .substring(file.getOriginalFilename().lastIndexOf("."));
 
         String filename = UUID.randomUUID() + ext;
 

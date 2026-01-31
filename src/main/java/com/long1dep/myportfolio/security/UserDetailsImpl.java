@@ -1,7 +1,6 @@
 package com.long1dep.myportfolio.security;
 
 import com.long1dep.myportfolio.entity.User;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

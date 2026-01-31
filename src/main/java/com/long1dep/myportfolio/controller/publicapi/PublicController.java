@@ -2,6 +2,7 @@ package com.long1dep.myportfolio.controller.publicapi;
 
 import com.long1dep.myportfolio.dto.request.ContactRequest;
 import com.long1dep.myportfolio.dto.request.SubscribeRequest;
+import com.long1dep.myportfolio.dto.response.MessageResponse;
 import com.long1dep.myportfolio.dto.response.SearchResponse;
 import com.long1dep.myportfolio.service.ContactService;
 import com.long1dep.myportfolio.service.SearchService;
@@ -10,8 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/public")
@@ -22,19 +21,19 @@ public class PublicController {
     private final SearchService searchService;
 
     @PostMapping("/contact")
-    public ResponseEntity<?> contact(
+    public ResponseEntity<MessageResponse> contact(
             @Valid @RequestBody ContactRequest r
             ) {
         contactService.save(r);
-        return ResponseEntity.ok(Map.of("message", "Sent successfully"));
+        return ResponseEntity.ok(new MessageResponse("Sent successfully"));
     }
 
     @PostMapping("/subscribe")
-    public ResponseEntity<?> subscribe(
+    public ResponseEntity<MessageResponse> subscribe(
             @Valid @RequestBody SubscribeRequest r
             ) {
         subscriberService.subscribe(r.getEmail());
-        return ResponseEntity.ok(Map.of("message", "Subscribed"));
+        return ResponseEntity.ok(new MessageResponse("Subscribed"));
     }
 
     @GetMapping("/search")
